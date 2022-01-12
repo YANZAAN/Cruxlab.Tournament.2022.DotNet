@@ -1,6 +1,6 @@
 # Cruxlab.Tournament.2022.DotNet
 
-Let`s say we have a file with password and their validity requirement. Its looks like:
+Let's say we have a file with password and their validity requirements. It looks like:
 ```
 a 1-5 abcdj
 z 2-4 asfalseiruqwo
