@@ -3,44 +3,33 @@ using System.Linq;
 using System.IO;
 using System.Collections.Generic;
 
-namespace Cruxlab.Tournament._2022.DotNet
+namespace Cruxlab.Tournament
 {
-    /// <summary>
-    ///     Entity for password info extraction
-    /// </summary>
-    public struct Password
+    public struct PasswordValidationModel
     {
-        public char symbol;
-        public Tuple<int, int> range;
         public string password;
+        /// <summary>
+        ///     Symbol which should be present in password
+        /// </summary>
+        public char symbol;
+        /// <summary>
+        ///     Count range requirement
+        /// </summary>
+        public (int, int) range;
     }
 
     public class Program
     {
         /// <summary>
-        ///     Analyzer of password validity
+        ///     Check password model for validity
         /// </summary>
-        /// <param name="entry">Password entity to analyze</param>
+        /// <param name="model">Password validation model</param>
         /// <returns>True if password is valid, false otherwise</returns>
-        public static bool IsValid(Password entry)
+        public static bool IsValid(PasswordValidationModel model)
         {
-            var symbolsCount = entry.password.Count(element => element == entry.symbol);
+            var symbolsCount = model.password.Count(@char => @char == model.symbol);
 
-            return entry.range.Item1 <= symbolsCount && symbolsCount <= entry.range.Item2;
-        }
-
-        /// <summary>
-        ///     Function for valid passwords count computing
-        /// </summary>
-        /// <param name="enumerable">Passwords enumerable</param>
-        /// <returns>Integer valid passwords count</returns>
-        public static int GetValidPasswordCount(IEnumerable<Password> enumerable)
-        {
-            var validPasswordsCount = enumerable
-                .Select(IsValid)
-                .Count(value => value == true);
-
-            return validPasswordsCount;
+            return model.range.Item1 <= symbolsCount && symbolsCount <= model.range.Item2;
         }
 
         public static void Main(string[] args)
@@ -60,15 +49,15 @@ namespace Cruxlab.Tournament._2022.DotNet
                 .Select(list =>
                 {
                     var rangeArray = list[1].Split('-');
-                    return new Password
+                    return new PasswordValidationModel
                     {
-                        symbol = list[0][0],
-                        range = Tuple.Create(int.Parse(rangeArray[0]), int.Parse(rangeArray[1])),
+                        symbol = list[0].First(),
+                        range = (int.Parse(rangeArray[0]), int.Parse(rangeArray[1])),
                         password = list[2]
                     };
                 });
 
-            var validPasswordCount = GetValidPasswordCount(passwords);
+            var validPasswordCount = passwords.Count(IsValid);
 
             Console.WriteLine($"Valid password count: {validPasswordCount}");
         }
